@@ -10,3 +10,5 @@ cd frontend
 npm i
 npm start
 ```
+
+Make sure ```isLocal``` in ```App.js``` is set to ```true```!
