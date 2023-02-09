@@ -14,3 +14,9 @@ export async function searchArtist (query, token) {
   })
   return data.artists.items
 }
+
+const factor = 508.486
+const exponent = 0.129915
+export function getListeners (popularity) {
+    return factor * Math.exp(exponent * popularity)
+}
