@@ -37,17 +37,29 @@ function LocalGame (props) {
     let arr = []
     for (let i = 1; i <= numPlayers; i++) {
       if (i === hostID) {
-        players.push({ id: i, guess: '', score: 0, isHost: true })
+        players.push({ id: i, guess: {}, score: 0, isHost: true })
         setInputs(...inputs, '')
         options.push([])
       } else {
-        players.push({ id: i, guess: '', score: 0, isHost: false })
+        players.push({ id: i, guess: {}, score: 0, isHost: false })
         setInputs(...inputs, '')
         options.push([])
       }
     }
     setGameState(1)
     setOptions(options)
+  }
+  const handleSearchSelection = (id, artist) => {
+    let newList = [...inputs]
+    newList[id - 1] = artist.name
+    setInputs(newList)
+    players[id - 1].guess = artist
+    console.log(players)
+    newList = [...options]
+    newList[id - 1] = []
+    setOptions(newList)
+    console.log(players)
+
   }
   const updatePlayerGuess = (id, guess) => {
     const newList = [...inputs]
@@ -122,7 +134,7 @@ function LocalGame (props) {
                 {options.length > 0 && (
                   <ul style={{ listStyleType: 'none' }}>
                     {options[player.id - 1].map(artist => (
-                      <li className='score'><Button>{artist.name}</Button></li>
+                      <li className='score'><Button onClick={() => handleSearchSelection(player.id, artist)}>{artist.name}</Button></li>
                     ))}
                   </ul>
                 )}
@@ -157,7 +169,7 @@ function LocalGame (props) {
                   <ul style={{ listStyleType: 'none' }}>
                     {options[player.id - 1].map(artist => (
                         
-                      <li className='score'><Button>{artist.name}</Button></li>
+                      <li className='score'><Button onClick={() => handleSearchSelection(player.id, artist)}>{artist.name}</Button></li>
                     ))}
                   </ul>
                 )}
