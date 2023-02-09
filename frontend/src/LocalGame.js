@@ -13,17 +13,18 @@ import {
   TextField
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { searchArtist,  } from './functions'
+import { searchArtist, sortArtists } from './functions'
 
 const MAX_PLAYERS = 8
 var menuitems = []
 var players = []
 var results = []
+var target = {}
+var hostID = 1
 
 function LocalGame (props) {
   const [numPlayers, setNumPlayers] = useState(3)
   const [gameState, setGameState] = useState(0)
-  const [hostID, setHostID] = useState(1)
   const [inputs, setInputs] = useState([])
   const [options, setOptions] = useState([])
   useEffect(() => {
@@ -33,9 +34,46 @@ function LocalGame (props) {
       }
     }
   }, [])
-  const handleSubmit = () => {
+  const handleContinue = () => {
+    if (hostID < numPlayers) {
+      hostID = hostID + 1
+    } else {
+      hostID = 1
+    }
+    setInputs([])
+    setOptions([])
+    results = []
+    target = {}
+
+    let newArr = []
+    let newArrTwo = []
+    for (let i = 1; i <= numPlayers; i++) {
+      if (i === hostID) {
+        newArr.push({
+          id: i,
+          guess: null,
+          score: players[i - 1].score,
+          isHost: true
+        })
+        newArrTwo.push('')
+        options.push([])
+      } else {
+        newArr.push({
+          id: i,
+          guess: null,
+          score: players[i - 1].score,
+          isHost: false
+        })
+        newArrTwo.push('')
+        options.push([])
+      }
+    }
+    setInputs(newArrTwo)
+    players = newArr
+    setGameState(1)
+  }
+  const handleStartGame = () => {
     players = []
-    let arr = []
     for (let i = 1; i <= numPlayers; i++) {
       if (i === hostID) {
         players.push({ id: i, guess: null, score: 0, isHost: true })
@@ -53,17 +91,22 @@ function LocalGame (props) {
   const handleSubmitAnswers = () => {
     let targetArtist = players[hostID - 1].guess
     if (targetArtist === null) {
-        alert("Must have a target artist!")
+      alert('Must have a target artist!')
+      return
     }
     let guessArtists = []
-    console.log(players)
-    players.map(player => (player.guess !== null && !player.isHost) ? guessArtists.push({id: player.id, artist: player.guess}) : null)
-    console.log(guessArtists)
+    players.map(player =>
+      player.guess !== null && !player.isHost
+        ? guessArtists.push({ id: player.id, artist: player.guess })
+        : null
+    )
     if (guessArtists.length >= 2) {
-        setGameState(2)
-
+      results = sortArtists(targetArtist, guessArtists)
+      target = targetArtist
+      setGameState(2)
     } else {
-        alert("Must have at least two guesses!")
+      alert('Must have at least two guesses!')
+      return
     }
     //let sortedAnswers = sortArtists(targetArtist, guessArtists)
     //results = sortedAnswers
@@ -73,11 +116,9 @@ function LocalGame (props) {
     newList[id - 1] = artist.name
     setInputs(newList)
     players[id - 1].guess = artist
-    console.log(players)
     newList = [...options]
     newList[id - 1] = []
     setOptions(newList)
-    console.log(players)
   }
   const updatePlayerGuess = (id, guess) => {
     const newList = [...inputs]
@@ -86,15 +127,11 @@ function LocalGame (props) {
   }
   const submitPlayerGuess = async id => {
     let artists = await searchArtist(inputs[id - 1], props.token)
-    console.log(artists)
     if (artists.length > 0) {
       const newList = [...options]
       newList[id - 1] = artists
-      console.log(newList)
-
       setOptions(newList)
     }
-    console.log(options)
   }
   return (
     <div className='App'>
@@ -115,7 +152,7 @@ function LocalGame (props) {
               >
                 {menuitems}
               </Select>
-              <Button onClick={() => handleSubmit()}>Submit</Button>
+              <Button onClick={() => handleStartGame()}>Submit</Button>
             </FormControl>
           </div>
         )}
@@ -209,8 +246,22 @@ function LocalGame (props) {
               </div>
             )
           )}
-          {gameState == 1 && <Button onClick={() => handleSubmitAnswers()}>Submit answers</Button>}
-          {gameState == 2 && results.map(result => <div>{result}</div>)}
+        {gameState == 1 && (
+          <Button onClick={() => handleSubmitAnswers()}>Submit answers</Button>
+        )}
+        {gameState == 2 && (
+          <div>
+            Target: {target.name} - {target.popularity}{' '}
+            <ol className='score'>
+              {results.map(result => (
+                <li>
+                  {result.artist.name} - {result.artist.popularity}
+                </li>
+              ))}
+            </ol>
+            <Button onClick={() => handleContinue()}>Continue</Button>
+          </div>
+        )}
       </header>
     </div>
   )
