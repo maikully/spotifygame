@@ -23,7 +23,10 @@ export function getListeners (popularity) {
 
 export function sortArtists (hostArtist, playerArtists){
     var hostListeners = getListeners(hostArtist.popularity)
-    playerArtists.sort(function(a, b){return Math.abs(getListeners(a.popularity) - hostListeners)
-        - Math.abs(getListeners(b.popularity) - hostListeners)})
+    for (let i = 0; i < playerArtists.length; i++) {
+        playerArtists[i].listeners = getListeners(playerArtists[i].popularity)
+    }
+    playerArtists.sort(function(a, b){return Math.abs(a.listeners - hostListeners)
+        - Math.abs(b.listeners - hostListeners)})
     return playerArtists
 }
