@@ -13,7 +13,7 @@ import {
   TextField
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { searchArtist, sortArtists } from './functions'
+import { searchArtist, sortArtists, numberWithCommas } from './functions'
 
 const MAX_PLAYERS = 8
 var menuitems = []
@@ -28,8 +28,8 @@ function LocalGame (props) {
   const [inputs, setInputs] = useState([])
   const [options, setOptions] = useState([])
   useEffect(() => {
-    for (var i = 2; i <= MAX_PLAYERS; i++) {
-      if (menuitems.length < MAX_PLAYERS) {
+    for (var i = 3; i <= MAX_PLAYERS; i++) {
+      if (menuitems.length < MAX_PLAYERS - 2) {
         menuitems.push(<MenuItem value={i}>{i}</MenuItem>)
       }
     }
@@ -101,8 +101,12 @@ function LocalGame (props) {
         : null
     )
     if (guessArtists.length >= 2) {
-      results = sortArtists(targetArtist, guessArtists)
+      let r = sortArtists(targetArtist, guessArtists)
+      results = r[0]
       target = targetArtist
+      target.listeners = r[1]
+      console.log(results)
+      console.log(target)
       setGameState(2)
     } else {
       alert('Must have at least two guesses!')
@@ -251,11 +255,11 @@ function LocalGame (props) {
         )}
         {gameState == 2 && (
           <div>
-            Target: {target.name} - {target.popularity}{' '}
+            Target: {target.name} - {target.popularity} - {numberWithCommas(parseInt(target.listeners))} {' '}
             <ol className='score'>
               {results.map(result => (
                 <li>
-                  {result.artist.name} - {result.artist.popularity}
+                  {result.artist.name} - {result.artist.popularity} - {numberWithCommas(parseInt(result.listeners))}
                 </li>
               ))}
             </ol>

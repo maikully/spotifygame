@@ -24,9 +24,12 @@ export function getListeners (popularity) {
 export function sortArtists (hostArtist, playerArtists){
     var hostListeners = getListeners(hostArtist.popularity)
     for (let i = 0; i < playerArtists.length; i++) {
-        playerArtists[i].listeners = getListeners(playerArtists[i].popularity)
+        playerArtists[i].listeners = getListeners(playerArtists[i].artist.popularity)
     }
     playerArtists.sort(function(a, b){return Math.abs(a.listeners - hostListeners)
         - Math.abs(b.listeners - hostListeners)})
-    return playerArtists
+    return [playerArtists, hostListeners]
+}
+export function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
