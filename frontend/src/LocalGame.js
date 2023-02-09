@@ -13,11 +13,12 @@ import {
   TextField
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { searchArtist } from './functions'
+import { searchArtist,  } from './functions'
 
 const MAX_PLAYERS = 8
 var menuitems = []
 var players = []
+var results = []
 
 function LocalGame (props) {
   const [numPlayers, setNumPlayers] = useState(3)
@@ -37,17 +38,35 @@ function LocalGame (props) {
     let arr = []
     for (let i = 1; i <= numPlayers; i++) {
       if (i === hostID) {
-        players.push({ id: i, guess: {}, score: 0, isHost: true })
+        players.push({ id: i, guess: null, score: 0, isHost: true })
         setInputs(...inputs, '')
         options.push([])
       } else {
-        players.push({ id: i, guess: {}, score: 0, isHost: false })
+        players.push({ id: i, guess: null, score: 0, isHost: false })
         setInputs(...inputs, '')
         options.push([])
       }
     }
     setGameState(1)
     setOptions(options)
+  }
+  const handleSubmitAnswers = () => {
+    let targetArtist = players[hostID - 1].guess
+    if (targetArtist === null) {
+        alert("Must have a target artist!")
+    }
+    let guessArtists = []
+    console.log(players)
+    players.map(player => (player.guess !== null && !player.isHost) ? guessArtists.push({id: player.id, artist: player.guess}) : null)
+    console.log(guessArtists)
+    if (guessArtists.length >= 2) {
+        setGameState(2)
+
+    } else {
+        alert("Must have at least two guesses!")
+    }
+    //let sortedAnswers = sortArtists(targetArtist, guessArtists)
+    //results = sortedAnswers
   }
   const handleSearchSelection = (id, artist) => {
     let newList = [...inputs]
@@ -59,7 +78,6 @@ function LocalGame (props) {
     newList[id - 1] = []
     setOptions(newList)
     console.log(players)
-
   }
   const updatePlayerGuess = (id, guess) => {
     const newList = [...inputs]
@@ -109,7 +127,7 @@ function LocalGame (props) {
                   display: 'flex',
                   flexDirection: 'row',
                   flexWrap: 'wrap',
-                  alignItems:"end"
+                  alignItems: 'end'
                 }}
               >
                 <div style={{ marginBottom: '5vh' }}>
@@ -134,7 +152,15 @@ function LocalGame (props) {
                 {options.length > 0 && (
                   <ul style={{ listStyleType: 'none' }}>
                     {options[player.id - 1].map(artist => (
-                      <li className='score'><Button onClick={() => handleSearchSelection(player.id, artist)}>{artist.name}</Button></li>
+                      <li className='score'>
+                        <Button
+                          onClick={() =>
+                            handleSearchSelection(player.id, artist)
+                          }
+                        >
+                          {artist.name}
+                        </Button>
+                      </li>
                     ))}
                   </ul>
                 )}
@@ -145,7 +171,7 @@ function LocalGame (props) {
                   display: 'flex',
                   flexDirection: 'row',
                   flexWrap: 'wrap',
-                  alignItems:"end"
+                  alignItems: 'end'
                 }}
               >
                 <div style={{ marginBottom: '5vh' }}>
@@ -168,14 +194,23 @@ function LocalGame (props) {
                 {options.length > 0 && (
                   <ul style={{ listStyleType: 'none' }}>
                     {options[player.id - 1].map(artist => (
-                        
-                      <li className='score'><Button onClick={() => handleSearchSelection(player.id, artist)}>{artist.name}</Button></li>
+                      <li className='score'>
+                        <Button
+                          onClick={() =>
+                            handleSearchSelection(player.id, artist)
+                          }
+                        >
+                          {artist.name}
+                        </Button>
+                      </li>
                     ))}
                   </ul>
                 )}
               </div>
             )
           )}
+          {gameState == 1 && <Button onClick={() => handleSubmitAnswers()}>Submit answers</Button>}
+          {gameState == 2 && results.map(result => <div>{result}</div>)}
       </header>
     </div>
   )
