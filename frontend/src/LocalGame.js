@@ -178,7 +178,7 @@ function LocalGame (props) {
                   </p>
                   <TextField
                     id='filled-basic'
-                    label={player.id}
+                    label={"target"}
                     value={inputs[player.id - 1]}
                     variant='filled'
                     onChange={e => updatePlayerGuess(player.id, e.target.value)}
@@ -190,7 +190,7 @@ function LocalGame (props) {
                   </div>
                 </div>
                 <br></br>
-                {options.length > 0 && (
+                {options.length > player.id - 1 && options[player.id - 1].length > 0 && (
                   <ul style={{ listStyleType: 'none' }}>
                     {options[player.id - 1].map(artist => (
                       <li className='score'>
@@ -221,7 +221,7 @@ function LocalGame (props) {
                   </p>
                   <TextField
                     id='filled-basic'
-                    label={player.id}
+                    label={"player " + player.id + " guess"}
                     value={inputs[player.id - 1]}
                     variant='filled'
                     onChange={e => updatePlayerGuess(player.id, e.target.value)}
@@ -232,7 +232,7 @@ function LocalGame (props) {
                     </Button>
                   </div>
                 </div>
-                {options.length > 0 && (
+                {options.length > player.id - 1 && options[player.id - 1].length > 0 && (
                   <ul style={{ listStyleType: 'none' }}>
                     {options[player.id - 1].map(artist => (
                       <li className='score'>
@@ -250,16 +250,16 @@ function LocalGame (props) {
               </div>
             )
           )}
-        {gameState == 1 && (
+        {gameState === 1 && (
           <Button onClick={() => handleSubmitAnswers()}>Submit answers</Button>
         )}
-        {gameState == 2 && (
+        {gameState === 2 && (
           <div>
-            Target: {target.name} - {target.popularity} - {numberWithCommas(parseInt(target.listeners))} {' '}
+            Target: {target.name} - {target.popularity}% - {numberWithCommas(parseInt(target.listeners))} {' '}
             <ol className='score'>
               {results.map(result => (
                 <li>
-                  {result.artist.name} - {result.artist.popularity} - {numberWithCommas(parseInt(result.listeners))}
+                  player {result.id}: {result.artist.name} - {result.artist.popularity}% - {numberWithCommas(parseInt(result.listeners))}
                 </li>
               ))}
             </ol>

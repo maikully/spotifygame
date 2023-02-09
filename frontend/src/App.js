@@ -7,8 +7,9 @@ import '@fontsource/roboto/700.css'
 import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import LocalGame from './LocalGame'
+const isLocal = true
 const CLIENT_ID = 'aa5381ee14f541b8a0774244d2eff5c0'
-const REDIRECT_URI = 'http://localhost:3000/'
+const REDIRECT_URI = isLocal ? 'http://localhost:3000/' : 'https://maikully.github.io/spotifygame/'
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize'
 const RESPONSE_TYPE = 'token'
 function App () {
