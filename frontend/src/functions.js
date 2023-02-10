@@ -33,3 +33,16 @@ export function sortArtists (hostArtist, playerArtists){
 export function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+
+export function getListenersScore (hostArtist, playerArtists) {
+    var hostListeners = getListeners(hostArtist.popularity)
+    for (let i = 0; i < playerArtists.length; i++) {
+        playerArtists[i].score += 100 - (i * 10)
+    }
+
+}
+
+export function getSimilarityScore (hostArtist, playerArtists){
+
+}
