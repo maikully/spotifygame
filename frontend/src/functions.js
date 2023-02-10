@@ -23,6 +23,7 @@ export function getListeners (popularity) {
 
 export function sortArtists (hostArtist, playerArtists){
     var hostListeners = getListeners(hostArtist.popularity)
+    hostArtist.listeners = hostListeners
     for (let i = 0; i < playerArtists.length; i++) {
         playerArtists[i].listeners = getListeners(playerArtists[i].artist.popularity)
     }
@@ -36,7 +37,6 @@ export function numberWithCommas(x) {
 
 
 export function getListenersScore (hostArtist, playerArtists) {
-    var hostListeners = getListeners(hostArtist.popularity)
     for (let i = 0; i < playerArtists.length; i++) {
         playerArtists[i].score += 100 - (i * 10)
     }
