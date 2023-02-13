@@ -14,11 +14,16 @@ export async function searchArtist (query, token) {
   })
   return data.artists.items
 }
-//based on curve 7.69736 log(0.00196755 x)
-const factor = 508.486
-const exponent = 0.129915
+//based on curve 173.1x^0.02984 - 205.8
+const factorMult = 9.77338 * Math.pow(10, -76)
+const factorAdd = 205.8
+const exponent = 33.51206434316354
 export function getListeners (popularity) {
-    return factor * Math.exp(exponent * popularity)
+    if(popularity <= 95){
+    return factorMult * Math.pow(popularity + factorAdd, exponent)
+    } else {
+    return (7 * Math.pow(popularity, 4)/24 - (1349 * Math.pow(popularity, 3))/12 + (389945 * Math.pow(popularity, 2))/24 - (12523819 * popularity)/12 + 25138211
+    }
 }
 
 export function sortArtists (hostArtist, playerArtists){
@@ -36,11 +41,12 @@ export function numberWithCommas(x) {
 }
 
 
-export function getListenersScore (hostArtist, playerArtists) {
-    for (let i = 0; i < playerArtists.length; i++) {
-        playerArtists[i].score += 100 - (i * 10)
+function getListenersScore(guesses,target){
+    for(i=0;i<guesses.length;i++){
+            pct = Math.abs(guesses[i].listeners/target.listeners-1
+            guesses[i].score = (100 - 10*i)+(i===0 ? 25 : 0)+pct<.25 ? 50 :0+pct<.05 ? 100 :0);
     }
-
+    return guesses;
 }
 
 export function getSimilarityScore (hostArtist, playerArtists){
